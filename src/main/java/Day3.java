@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +7,8 @@ import java.util.Objects;
 public class Day3 {
 
     public static void main(String[] args) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(Day3.class.getResourceAsStream("/3.in")));
-        String row;
+        List<Claim> claims = Util.readFile(Claim::new);
         Map<Node, Integer> squares = new HashMap<>();
-        List<Claim> claims = new ArrayList<>();
-        while ((row = in.readLine()) != null) {
-            claims.add(new Claim(row));
-        }
         for (Claim claim : claims) {
             for (int i = 0; i < claim.w; ++i) {
                 for (int j = 0; j < claim.h; ++j) {
