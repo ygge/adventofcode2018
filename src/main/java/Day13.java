@@ -29,9 +29,12 @@ public class Day13 {
                 for (Cart otherCart : carts) {
                     if (otherCart != cart && cart.compareTo(otherCart) == 0) {
                         System.out.println("Collision: " + cart.x + "," + cart.y);
+                        --i;
+                        if (carts.indexOf(otherCart) <= i) {
+                            --i;
+                        }
                         carts.remove(cart);
                         carts.remove(otherCart);
-                        --i;
                         break;
                     }
                 }
