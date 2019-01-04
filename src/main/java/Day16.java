@@ -1,21 +1,24 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public class Day16 {
 
+    private static final List<BiFunction<int[], int[], int[]>> FUNCTIONS = Arrays.asList(
+            Day16::addr, Day16::addi, Day16::mulr, Day16::muli, Day16::banr, Day16::bani, Day16::borr, Day16::bori,
+            Day16::setr, Day16::seti, Day16::gtir, Day16::gtri, Day16::gtrr, Day16::eqir, Day16::eqri, Day16::eqrr
+    );
+
     public static void main(String[] args) throws IOException {
         List<String> input = Util.readStrings();
 
-        // step 1
-        List<BiFunction<int[], int[], int[]>> functions = Arrays.asList(
-                Day16::addr, Day16::addi, Day16::mulr, Day16::muli, Day16::banr, Day16::bani, Day16::borr, Day16::bori,
-                Day16::setr, Day16::seti, Day16::gtir, Day16::gtri, Day16::gtrr, Day16::eqir, Day16::eqri, Day16::eqrr
-        );
-
-        int moreThan3 = 0;
-        for (int i = 0; i < input.size(); ++i) {
+        List<int[][]> data = new ArrayList<>();
+        int i = 0;
+        for (; i < input.size(); ++i) {
             String b = input.get(i);
             if (!b.startsWith("Before: ")) {
                 break;
@@ -25,9 +28,73 @@ public class Day16 {
             String a = input.get(++i);
             int[] after = parse(a.substring(9, a.length()-1));
             ++i;
+            int[][] d = new int[3][];
+            d[0] = before;
+            d[1] = instructions;
+            d[2] = after;
+            data.add(d);
+        }
 
-            int matches = (int)functions.stream()
-                    .filter(f -> eq(f.apply(before, instructions), after))
+        List<int[]> program = new ArrayList<>();
+        while (i < input.size()) {
+            String s = input.get(i++);
+            if (s.length() > 0) {
+                program.add(parse(s));
+            }
+        }
+
+        // step 1
+        step1(data);
+
+        // step 2
+        step2(data, program);
+    }
+
+    private static void step2(List<int[][]> data, List<int[]> program) {
+        int[] mapping = new int[FUNCTIONS.size()];
+        for (int i = 0; i < mapping.length; ++i) {
+            mapping[i] = -1;
+        }
+        int set = 0;
+        while (set < FUNCTIONS.size()) {
+            for (int[][] d : data) {
+                int matches = -1;
+                for (int i = 0; i < FUNCTIONS.size(); ++i) {
+                    if (mapping[i] != -1) {
+                        continue;
+                    }
+                    int[] res = FUNCTIONS.get(i).apply(d[0], d[1]);
+                    if (eq(res, d[2])) {
+                        if (matches != -1) {
+                            matches = -1;
+                            break;
+                        }
+                        matches = i;
+                    }
+                }
+                if (matches != -1) {
+                    mapping[matches] = d[1][0];
+                    ++set;
+                }
+            }
+        }
+        Map<Integer, BiFunction<int[], int[], int[]>> instructions = new HashMap<>();
+        for (int i = 0; i < mapping.length; ++i) {
+            instructions.put(mapping[i], FUNCTIONS.get(i));
+        }
+
+        int[] state = new int[]{ 0, 0, 0, 0 };
+        for (int[] ins : program) {
+            state = instructions.get(ins[0]).apply(state, ins);
+        }
+        System.out.println(state[0]);
+    }
+
+    private static void step1(List<int[][]> data) {
+        int moreThan3 = 0;
+        for (int[][] d : data) {
+            int matches = (int) FUNCTIONS.stream()
+                    .filter(f -> eq(f.apply(d[0], d[1]), d[2]))
                     .count();
             moreThan3 += matches >= 3 ? 1 : 0;
         }
