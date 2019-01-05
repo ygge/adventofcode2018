@@ -41,6 +41,12 @@ public class Day17 {
         waterTiles.remove(new Pos(500, 0));
         System.out.println(waterTiles.size());
         printBoard(clayTiles, minX, maxX, minY, maxY, waterTiles);
+
+        // step 2
+        long left = waterTiles.values().stream()
+                .filter(type -> type == WaterType.NOT_FLOWING)
+                .count();
+        System.out.println(left);
     }
 
     private static void printBoard(Set<Pos> clayTiles, int minX, int maxX, int minY, int maxY, Map<Pos, WaterType> waterTiles) {
