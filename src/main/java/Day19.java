@@ -1,17 +1,11 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
 public class Day19 {
-
-    private static final List<BiFunction<int[], int[], int[]>> FUNCTIONS = Arrays.asList(
-            Day19::addr, Day19::addi, Day19::mulr, Day19::muli, Day19::banr, Day19::bani, Day19::borr, Day19::bori,
-            Day19::setr, Day19::seti, Day19::gtir, Day19::gtri, Day19::gtrr, Day19::eqir, Day19::eqri, Day19::eqrr
-    );
 
     public static void main(String[] args) throws IOException {
         List<String> input = Util.readStrings();
@@ -44,18 +38,23 @@ public class Day19 {
         }
 
         // Step 1
-        run(functions, ipr, program, 0);
+        run(functions, ipr, program);
 
         // Step 2
-        //run(functions, ipr, program, 1);
+        int sum = 0;
+        int num = 10551298;
+        for (int i = 1; i <= num; ++i) {
+            if (num %i == 0) {
+                sum += i;
+            }
+        }
+        System.out.println(sum);
     }
 
-    private static void run(Map<String, BiFunction<int[], int[], int[]>> functions, int ipr, List<Instruction> program, int start0) {
+    private static void run(Map<String, BiFunction<int[], int[], int[]>> functions, int ipr, List<Instruction> program) {
         int[] registers = new int[6];
-        registers[0] = start0;
         int ip = 0;
         while (ip < program.size()) {
-            System.out.println("ip: " + ip + " - " + toString(registers));
             registers[ipr] = ip;
             Instruction instruction = program.get(ip);
             functions.get(instruction.op).apply(registers, instruction.params);
@@ -63,18 +62,6 @@ public class Day19 {
             ++ip;
         }
         System.out.println(registers[0]);
-    }
-
-    private static String toString(int[] registers) {
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < registers.length; ++i) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(registers[i]);
-        }
-        sb.append("]");
-        return sb.toString();
     }
 
     private static int[] addr(int[] r, int[] i) {
@@ -170,7 +157,7 @@ public class Day19 {
         private final String op;
         private final int[] params;
 
-        public Instruction(String op, int[] params) {
+        private Instruction(String op, int[] params) {
             this.op = op;
             this.params = params;
         }
