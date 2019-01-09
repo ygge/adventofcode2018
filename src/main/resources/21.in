@@ -39,16 +39,16 @@ seti 5 3 2
  4 seti 0 0 2               -- loop tillbaka till 0
 
  5 seti 0 9 1               -- sätt register 1 till 0
- 6 bori 1 65536 4           -- sätt register 4 till register 1 OR 65536
- 7 seti 16298264 8 1        -- sätt register 1 till 16298264
+ 6 bori 1 65536 4           -- sätt register 4 till register 1 OR 65536 (0x10000)
+ 7 seti 16298264 8 1        -- sätt register 1 till 16298264 (0xF8B118)
  8 bani 4 255 5             -- sätt register 5 till register 4 AND 255
  9 addr 1 5 1               -- lägg på register 5 till register 1
-10 bani 1 16777215 1        -- sätt register 1 till register 1 AND 16777215
-11 muli 1 65899 1           -- multiplicera register 1 med 65899
-12 bani 1 16777215 1        -- sätt register 1 till register 1 AND 16777215
+10 bani 1 16777215 1        -- sätt register 1 till register 1 AND 16777215 (0xFFFFFF)
+11 muli 1 65899 1           -- multiplicera register 1 med 65899 (0x1016B)
+12 bani 1 16777215 1        -- sätt register 1 till register 1 AND 16777215 (0xFFFFFF)
 13 gtir 256 4 5             -- sätt register 5 till om 256 är större än register 4
 14 addr 5 2 2               -- hoppa över 15 om 5 är 1
-15 addi 2 1 2               -- hoppa register 1 steg framåt (förmodligen klar?)
+15 addi 2 1 2               -- hoppa till 17
 16 seti 27 1 2              -- hoppa till 28
 17 seti 0 3 5               -- sätt register 5 till 0
 18 addi 5 1 3               -- sätt register 3 till register 5 plus 1
@@ -57,10 +57,10 @@ seti 5 3 2
 21 addr 3 2 2               -- hoppa över 22 om register 3 är 1
 22 addi 2 1 2               -- hoppa över 23
 23 seti 25 4 2              -- hoppa till 26
-24 addi 5 1 5               -- lätt till 1 på register 5
+24 addi 5 1 5               -- lägg till 1 på register 5
 25 seti 17 1 2              -- hoppa till 18
 26 setr 5 3 4               -- sätt register 4 till register 5
 27 seti 7 7 2               -- hoppa till 8
-28 eqrr 1 0 5               -- sätt register 5 till om register 1 är större än register 0
+28 eqrr 1 0 5               -- sätt register 5 till om register 1 är lika med register 0
 29 addr 5 2 2               -- avsluta om register 5 är 1
 30 seti 5 3 2               -- hoppa till 6

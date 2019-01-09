@@ -1,8 +1,10 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public class Day21 {
@@ -41,19 +43,32 @@ public class Day21 {
         }
 
         // Step 1
-        run(functions, ipr, program);
+        run(functions, ipr, program, true);
+
+        // Step 2
+        run(functions, ipr, program, false);
     }
 
-    private static void run(Map<String, BiFunction<int[], int[], int[]>> functions, int ipr, List<Instruction> program) {
+    private static void run(Map<String, BiFunction<int[], int[], int[]>> functions, int ipr, List<Instruction> program, boolean breakOnFirst) {
         int[] registers = new int[6];
         int ip = 0;
-        registers[0] = 3345459;
+        registers[0] = 0;
         int count = 0;
+        int last = 0;
+        Set<Integer> seen = new HashSet<>();
         while (ip < program.size()) {
             registers[ipr] = ip;
             ++count;
             if (ip == 28) {
-                System.out.println(registers[1]);
+                if (breakOnFirst) {
+                    System.out.println(registers[1]);
+                    break;
+                }
+                if (!seen.add(registers[1])) {
+                    System.out.println(last);
+                    break;
+                }
+                last = registers[1];
             }
             Instruction instruction = program.get(ip);
             functions.get(instruction.op).apply(registers, instruction.params);
@@ -61,6 +76,18 @@ public class Day21 {
             ++ip;
         }
         System.out.println("Done in " + count);
+    }
+
+    private static String registers(int[] registers) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int register : registers) {
+            if (sb.length() > 1) {
+                sb.append(",");
+            }
+            sb.append(String.format("%9d", register));
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     private static int[] addr(int[] r, int[] i) {
